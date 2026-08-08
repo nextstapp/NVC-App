@@ -27,12 +27,16 @@ npm run format       # prettier --write .
 
 ```
 src/
-  app/          # Screens — Expo Router file-based routing (typed routes enabled)
-  components/   # Reusable UI primitives (ThemedText, ThemedView, …)
+  app/          # Routes — Expo Router file-based routing (typed routes); thin re-exports only
+  features/     # Feature folders (screen + components + store together); games → features/games/<name>/
+  components/   # Shared UI primitives (ThemedText, ThemedView, …)
   constants/    # theme.ts — design tokens: Colors, FontFamily, Spacing, Radius
   hooks/        # use-theme, use-color-scheme
+  stores/       # Global zustand stores (persist + AsyncStorage); pattern: use-settings-store.ts
 assets/         # App icons, splash
 ```
+
+**Binding rules for where code goes, state, navigation, and styling live in [AGENTS.md](./AGENTS.md).** Read it before writing code — it is the single source of truth for conventions.
 
 ## Conventions
 
