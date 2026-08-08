@@ -2,6 +2,24 @@
   "name": "nvc-app",
   "main": "expo-router/entry",
   "version": "1.0.0",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "lint": "expo lint",
+    "typecheck": "tsc --noEmit",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "eas:and:dev": "eas build -p android -e development --local",
+    "eas:and:preview": "eas build -p android -e preview --local",
+    "eas:and:prod": "eas build -p android -e production --local",
+    "eas:ios:dev": "eas build -p ios -e development --local",
+    "eas:ios:preview": "eas build -p ios -e preview --local",
+    "eas:ios:prod": "eas build -p ios -e production --auto-submit",
+    "eas:ios:submit": "eas submit -p ios --latest",
+    "eas:prod": "eas build -p all -e production"
+  },
   "dependencies": {
     "@expo-google-fonts/inter": "^0.4.2",
     "@react-native-async-storage/async-storage": "2.2.0",
@@ -33,24 +51,6 @@
     "eslint-config-prettier": "^10.1.8",
     "prettier": "^3.9.6",
     "typescript": "~6.0.3"
-  },
-  "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web",
-    "lint": "expo lint",
-    "typecheck": "tsc --noEmit",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
-    "eas:and:dev": "eas build -p android -e development --local",
-    "eas:and:preview": "eas build -p android -e preview --local",
-    "eas:and:prod": "eas build -p android -e production --local",
-    "eas:ios:dev": "eas build -p ios -e development --local",
-    "eas:ios:preview": "eas build -p ios -e preview --local",
-    "eas:ios:prod": "eas build -p ios -e production --auto-submit",
-    "eas:ios:submit": "eas submit -p ios --latest",
-    "eas:prod": "eas build -p all -e production"
   },
   "private": true
 }
