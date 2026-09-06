@@ -28,17 +28,17 @@ const styles = StyleSheet.create({
   small: {
     fontSize: 14,
     lineHeight: 20,
-    fontFamily: FontFamily.medium,
+    fontFamily: FontFamily.semiBold,
   },
   subtitle: {
     fontSize: 24,
     lineHeight: 32,
-    fontFamily: FontFamily.semiBold,
+    fontFamily: FontFamily.bold,
   },
   title: {
     fontSize: 36,
     lineHeight: 44,
-    fontFamily: FontFamily.bold,
+    fontFamily: FontFamily.extraBold,
   },
   code: {
     fontSize: 13,
