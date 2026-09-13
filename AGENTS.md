@@ -56,13 +56,13 @@ export { MemoryGameScreen as default } from '@/features/games/memory/memory-game
 - No barrel exports (`index.ts` re-export files) — they break fast refresh.
 - Path alias `@/*` → `src/*`; always import via the alias, never relative `../../`.
 - TypeScript strict; no `any`, no `@ts-ignore` without a one-line reason.
-- New dependency = last resort. Order: React/React Native built-in → Expo SDK package → already-installed dependency → new package. RN-native packages install via `npx expo install`, never plain `npm install`.
+- New dependency = last resort. Order: React/React Native built-in → Expo SDK package → already-installed dependency → new package. RN-native packages install via `bunx expo install`, never plain `bun add`.
 - No backend, no network calls. Everything is local.
 
 ## Quality gates — run before every commit
 
 ```bash
-npm run typecheck && npm run lint && npm run format:check
+bun run typecheck && bun run lint && bun run format:check
 ```
 
 All three must pass. Fix, don't suppress.

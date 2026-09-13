@@ -5,8 +5,8 @@ Mobile app for the NVC project, built with [Expo](https://expo.dev) SDK 57 (Reac
 ## Get started
 
 ```bash
-npm install
-npx expo start
+bun install
+bunx expo start
 ```
 
 Then open on an Android emulator, iOS simulator, physical device via [Expo Go](https://expo.dev/go), or a [development build](https://docs.expo.dev/develop/development-builds/introduction/).
@@ -14,13 +14,13 @@ Then open on an Android emulator, iOS simulator, physical device via [Expo Go](h
 ## Scripts
 
 ```bash
-npm start            # expo start
-npm run android      # expo start --android
-npm run ios          # expo start --ios
-npm run web          # expo start --web
-npm run lint         # eslint (eslint-config-expo + prettier)
-npm run typecheck    # tsc --noEmit (strict)
-npm run format       # prettier --write .
+bun start            # expo start
+bun run android      # expo start --android
+bun run ios          # expo start --ios
+bun run web          # expo start --web
+bun run lint         # eslint (eslint-config-expo + prettier)
+bun run typecheck    # tsc --noEmit (strict)
+bun run format       # prettier --write .
 ```
 
 ## Structure
