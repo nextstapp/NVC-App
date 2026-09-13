@@ -9,11 +9,12 @@ import {
   type Locale,
   type ModuleState,
 } from '@/content/nvc-content';
+import { deviceLocale } from '@/lib/device-locale';
 
 export type ThemePreference = 'system' | 'light' | 'dark';
 
 type ProfileState = {
-  locale: Locale | null;
+  locale: Locale;
   age: Age | null;
   themePreference: ThemePreference;
   /** Completed rounds per module id. */
@@ -41,12 +42,12 @@ const INITIAL_PROGRESS: Record<string, number> = { bridges: 5, 'seeing-clearly':
 export const useProfileStore = create<ProfileState>()(
   persist(
     (set) => ({
-      locale: null,
+      locale: deviceLocale(),
       age: null,
       themePreference: 'system',
       progress: INITIAL_PROGRESS,
       badges: [],
-      previousScore: 3,
+      previousScore: null,
       hydrated: false,
 
       setLocale: (locale) => set({ locale }),
@@ -74,11 +75,11 @@ export const useProfileStore = create<ProfileState>()(
 
       reset: () =>
         set({
-          locale: null,
+          locale: deviceLocale(),
           age: null,
           progress: INITIAL_PROGRESS,
           badges: [],
-          previousScore: 3,
+          previousScore: null,
         }),
     }),
     {
@@ -88,6 +89,12 @@ export const useProfileStore = create<ProfileState>()(
       // an already-onboarded user back to the language screen on cold start.
       onRehydrateStorage: () => () => useProfileStore.setState({ hydrated: true }),
       partialize: ({ hydrated: _hydrated, ...rest }) => rest,
+      // Profiles saved before the device-language default carry `locale: null`;
+      // keep the fresh default instead of letting the stale null win.
+      merge: (persisted, current) => {
+        const saved = persisted as Partial<ProfileState> | undefined;
+        return { ...current, ...saved, locale: saved?.locale ?? current.locale };
+      },
     },
   ),
 );

@@ -51,7 +51,9 @@ type CommonCopy = {
   zoneCamera: string;
   matchHint: string;
   matchHintLast: string;
+  matchMiss: string;
   sortHint: string;
+  sortMiss: string;
   replay: string;
   backToModule: string;
   summary: string;
@@ -76,12 +78,13 @@ type DensityCopy = {
   why: string;
   badgeTitle: string;
   badgeSub: string;
-  firstTry: string;
   /** Pair A and pair B: the same event told as a judgment and as a camera record. */
   judge: string;
   camera: string;
   judge2: string;
   camera2: string;
+  /** `{n}` first-try rounds out of `{total}`. */
+  firstTry: string;
   /** Words highlighted inside the judgment sentence on the feedback screen. */
   trap: string[];
   /** Chips listing this round's trap vocabulary. */
@@ -122,9 +125,13 @@ const tr: CommonCopy = {
   mascotGiraffe: 'Zürafa',
   zoneJudgment: 'Yargı',
   zoneCamera: 'Kamera',
-  matchHint: 'İki cümleye sırayla dokun. Yanlış olursa bir şey kaybetmezsin.',
+  matchHint:
+    'İki cümleye sırayla dokun. Yanlışta tekrar dene; sadece ilk denemede bilip bilmediğin sayılır.',
   matchHintLast: 'Bir eşleşme kaldı.',
-  sortHint: 'Karta dokunup tarafa dokun ya da sürükle. Yanlışta kart geri döner, ceza yok.',
+  matchMiss: 'Bu ikisi aynı olayı anlatmıyor. Tekrar dene.',
+  sortHint:
+    'Karta dokunup tarafa dokun ya da sürükle. Yanlışta kart geri döner; sadece ilk denemede bilip bilmediğin sayılır.',
+  sortMiss: 'Bu cümle o tarafa ait değil. Tekrar dene.',
   replay: 'Tekrar oyna',
   backToModule: 'Modüle dön',
   summary: 'Bu turun özeti',
@@ -134,9 +141,10 @@ const tr: CommonCopy = {
   noLeaderboard: 'Sıralama yok. Karşılaştırma sadece önceki seninle.',
   trapTitle: 'Bu turun tuzak kelimeleri',
   emptyTitle: 'Henüz rozetin yok',
-  emptySub: "İlk rozetini Modül 1'in son bölümünde kazanacaksın.",
+  emptySub: 'İlk rozetini Modül 02 Seeing Clearly turunun sonunda kazanacaksın.',
   emptyCta: 'Oyunlara git',
-  lockedToast: "Önce Modül 02'yi bitir",
+  /** `{n}` is the number of the module that is currently open. */
+  lockedToast: 'Sırada Modül {n} var, önce onu bitir',
   tabs: { games: 'Oyunlar', practice: 'Pratik', badges: 'Rozetler', me: 'Ben' },
 };
 
@@ -150,7 +158,7 @@ const trDensity: Record<Density, DensityCopy> = {
     why: '“Sürekli” bir sayı değil, bir yorum. Kamera “bu hafta üç ödevden ikisi”ni görür; “ihmalkâr”ı göremez.',
     badgeTitle: 'Observer rozeti senin!',
     badgeSub: 'Gözlemi yorumdan ayırmayı öğrendin.',
-    firstTry: "5 turun 4'ünü ilk denemede bildin.",
+    firstTry: '{total} turun {n} tanesini ilk denemede bildin.',
     judge: 'Ödevini yine yapmamışsın, sürekli ihmalkârsın.',
     camera: 'Bu hafta üç ödevden ikisini teslim etmedin.',
     judge2: 'Bu sınıf hiç saygılı değil.',
@@ -176,7 +184,7 @@ const trDensity: Record<Density, DensityCopy> = {
     why: '“Sürekli” ve “ihmalkâr” ölçülebilir bir sıklık değil, konuşanın çıkardığı bir sonuç. Kamera yalnızca teslim edilmeyen iki ödevi kaydedebilir; karakter hakkındaki yargıyı kaydedemez. Gözlemi ayırmak, karşındakinin savunmaya geçme ihtimalini düşürür.',
     badgeTitle: 'Observer rozetini kazandın',
     badgeSub: 'Değerlendirmeyi gözlemden ayırma becerisinde ilk seviyeyi tamamladın.',
-    firstTry: "5 turun 4'ünü ilk denemede doğru sınıflandırdın; bir turda ikinci deneme gerekti.",
+    firstTry: '{total} turun {n} tanesini ilk denemede doğru sınıflandırdın.',
     judge: 'Ödevini yine yapmamışsın, sürekli ihmalkâr davranıyorsun.',
     camera: 'Bu hafta verilen üç ödevden ikisini teslim etmedin.',
     judge2: 'Bu sınıftaki hiç kimse birbirine saygı göstermiyor.',
@@ -194,15 +202,42 @@ const trDensity: Record<Density, DensityCopy> = {
   },
 };
 
-// Only Turkish is written so far. The other five locales fall back to it until
-// their translations land — the shape is per-locale so a new file is a drop-in.
-const COMMON: Partial<Record<Locale, CommonCopy>> = { tr };
+// Turkish is the complete base; other locales override what they have and fall
+// back to Turkish for the rest, so a translation can land one key at a time.
+const COMMON: Partial<Record<Locale, Partial<CommonCopy>>> = {
+  tr,
+  en: {
+    next: 'Continue',
+    langTitle: 'Choose your language',
+    langSub: 'Which language do you want to use the app in?',
+  },
+  de: {
+    next: 'Weiter',
+    langTitle: 'Wähle deine Sprache',
+    langSub: 'In welcher Sprache möchtest du die App nutzen?',
+  },
+  it: {
+    next: 'Avanti',
+    langTitle: 'Scegli la tua lingua',
+    langSub: "In quale lingua vuoi usare l'app?",
+  },
+  pt: {
+    next: 'Continuar',
+    langTitle: 'Escolhe a tua língua',
+    langSub: 'Em que língua queres usar a app?',
+  },
+  ee: {
+    next: 'Edasi',
+    langTitle: 'Vali oma keel',
+    langSub: 'Mis keeles soovid rakendust kasutada?',
+  },
+};
 const BY_DENSITY: Partial<Record<Locale, Record<Density, DensityCopy>>> = { tr: trDensity };
 
 export type Copy = CommonCopy & DensityCopy;
 
 export function getCopy(locale: Locale, age: Age): Copy {
-  const common = COMMON[locale] ?? tr;
+  const common = { ...tr, ...COMMON[locale] };
   const density = (BY_DENSITY[locale] ?? trDensity)[densityForAge(age)];
 
   return { ...common, ...density };

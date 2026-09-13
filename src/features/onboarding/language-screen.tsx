@@ -1,40 +1,26 @@
 import { router } from 'expo-router';
-import { useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Image, Pressable, StyleSheet, View } from 'react-native';
 
-import { Mascot } from '@/components/mascot';
 import { NvcButton } from '@/components/nvc-button';
 import { ScreenShell } from '@/components/screen-shell';
 import { ThemedText } from '@/components/themed-text';
 import { Radius, Shadow, Size, Spacing, Type } from '@/constants/theme';
-import { LANGUAGES, getCopy, type Locale } from '@/content/nvc-content';
+import { LANGUAGES, getCopy } from '@/content/nvc-content';
 import { useTheme } from '@/hooks/use-theme';
 import { useProfileStore } from '@/stores/use-profile-store';
 
 export function LanguageScreen() {
   const theme = useTheme();
-  const setLocale = useProfileStore((state) => state.setLocale);
-  const [selected, setSelected] = useState<Locale>('tr');
+  const { locale: selected, setLocale } = useProfileStore();
   const copy = getCopy(selected, 12);
 
   return (
     <ScreenShell
-      centered
       contentStyle={styles.content}
-      action={
-        <NvcButton
-          label={copy.next}
-          onPress={() => {
-            setLocale(selected);
-            router.push('/onboarding/age');
-          }}
-        />
-      }
+      action={<NvcButton label={copy.next} onPress={() => router.push('/onboarding/age')} />}
     >
       <View style={styles.header}>
-        <View style={Shadow.card}>
-          <Mascot size={76} kind="giraffe" />
-        </View>
+        <Image source={require('@/assets/images/logo-emblem.png')} style={styles.logo} />
         <ThemedText style={[Type.overline, styles.brand, { color: theme.ink2 }]}>
           NVC-Game
         </ThemedText>
@@ -55,7 +41,7 @@ export function LanguageScreen() {
               key={language.locale}
               accessibilityRole="radio"
               accessibilityState={{ selected: isSelected }}
-              onPress={() => setSelected(language.locale)}
+              onPress={() => setLocale(language.locale)}
               style={[
                 styles.row,
                 {
@@ -94,8 +80,11 @@ export function LanguageScreen() {
 }
 
 const styles = StyleSheet.create({
-  content: { paddingTop: 6 },
-  header: { alignItems: 'center' },
+  // The list is pinned to the bottom so it never shifts when the header copy
+  // changes length across locales; the header floats centred in the space above.
+  content: { flexGrow: 1 },
+  header: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  logo: { width: Size.logo, height: Size.logo },
   brand: { marginTop: 14 },
   centerText: { textAlign: 'center' },
   sub: { marginTop: Spacing.two, maxWidth: 280 },
