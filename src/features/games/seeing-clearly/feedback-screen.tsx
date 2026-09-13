@@ -41,7 +41,7 @@ export function FeedbackScreen() {
           entering={FadeIn.duration(350)}
           style={[styles.check, { backgroundColor: theme.sun }]}
         >
-          <ThemedText style={[Type.feedbackTitle, { color: theme.onAccent }]}>✓</ThemedText>
+          <ThemedText style={[Type.feedbackTitle, { color: theme.onSun }]}>✓</ThemedText>
         </Animated.View>
         <ThemedText style={[Type.feedbackTitle, styles.centerText, { color: theme.ink }]}>
           {copy.fbTitle}
@@ -57,7 +57,7 @@ export function FeedbackScreen() {
         </ThemedText>
         <TrappedSentence sentence={copy.judge} traps={copy.trap} />
         <View style={[styles.divider, { backgroundColor: theme.line }]} />
-        <ThemedText style={[Type.tabLabel, styles.label, { color: theme.sun }]}>
+        <ThemedText style={[Type.tabLabel, styles.label, { color: theme.sunText }]}>
           {copy.zoneGiraffe}
         </ThemedText>
         <ThemedText style={[Type.bodyStrong, { color: theme.ink }]}>{copy.camera}</ThemedText>
@@ -120,8 +120,7 @@ function escapeRegExp(value: string) {
 }
 
 const styles = StyleSheet.create({
-  // No top bar on this screen, so the content owns the status-bar inset.
-  content: { paddingTop: 66 },
+  content: { paddingTop: Spacing.six },
   header: { alignItems: 'center', gap: 6 },
   check: {
     width: 42,

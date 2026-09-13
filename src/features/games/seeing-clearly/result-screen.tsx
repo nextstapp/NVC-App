@@ -30,7 +30,7 @@ export function ResultScreen() {
 
   // Snapshot the old score BEFORE the effect overwrites it — "last time" must
   // mean the previous session, not the one being banked right now.
-  const [previous] = useState(() => previousScore ?? 0);
+  const [previous] = useState(() => previousScore);
 
   // The session is banked once, on arrival: progress, the badge, and the score
   // this run will be compared against next time.
@@ -101,7 +101,7 @@ export function ResultScreen() {
                 ]}
               >
                 <ThemedText
-                  style={[Type.monoLarge, { color: firstTry ? theme.onAccent : theme.ink2 }]}
+                  style={[Type.monoLarge, { color: firstTry ? theme.onSun : theme.ink2 }]}
                 >
                   {round}
                 </ThemedText>
@@ -109,12 +109,16 @@ export function ResultScreen() {
             );
           })}
         </View>
-        <ThemedText style={[Type.toast, { color: theme.ink }]}>{copy.firstTry}</ThemedText>
+        <ThemedText style={[Type.toast, { color: theme.ink }]}>
+          {copy.firstTry
+            .replace('{n}', String(firstTryCount))
+            .replace('{total}', String(ROUNDS_PER_SESSION))}
+        </ThemedText>
       </View>
 
       <View style={[styles.card, { backgroundColor: theme.seaSoft }]}>
         <ThemedText style={[Type.overline, { color: theme.sea }]}>{copy.selfTitle}</ThemedText>
-        <CompareRow label={copy.lastTime} value={previous} muted />
+        {previous === null ? null : <CompareRow label={copy.lastTime} value={previous} muted />}
         <CompareRow label={copy.today} value={firstTryCount} />
         <ThemedText style={[Type.small, { color: theme.ink2 }]}>{copy.noLeaderboard}</ThemedText>
       </View>
@@ -145,7 +149,7 @@ function BadgeMedal() {
       <Animated.View style={[styles.ring, ringStyle, { borderColor: theme.sun }]} />
       <View style={[styles.disc, { backgroundColor: theme.sun }, Shadow.lifted]}>
         <View style={[styles.discDot, { backgroundColor: theme.surface }]} />
-        <ThemedText style={[Type.overline, { color: theme.onAccent }]}>Observer</ThemedText>
+        <ThemedText style={[Type.overline, { color: theme.onSun }]}>Observer</ThemedText>
       </View>
     </View>
   );
@@ -186,8 +190,7 @@ function CompareRow({
 }
 
 const styles = StyleSheet.create({
-  // No top bar here either — 62px per the handoff.
-  content: { paddingTop: 62 },
+  content: { paddingTop: Spacing.six },
   center: { alignItems: 'center' },
   centerText: { textAlign: 'center' },
   medal: { width: 112, height: 112, alignItems: 'center', justifyContent: 'center' },

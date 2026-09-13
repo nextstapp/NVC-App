@@ -21,7 +21,7 @@ export const Colors = {
     ink2: '#6B6157',
     line: '#E4D9C6',
     sun: '#E0B354',
-    clay: '#C76D55',
+    clay: '#B85C44',
     sea: '#4A6FA5',
     sunSoft: '#F8EDD5',
     claySoft: '#F7E2DA',
@@ -30,6 +30,10 @@ export const Colors = {
     claySoftLine: '#EBC9BC',
     seaSoftLine: '#C6D3E7',
     onAccent: '#FFFFFF',
+    // Ink on the sun tone: white only reaches 1.9:1 there.
+    onSun: '#2E2A25',
+    // Sun as text on a light surface needs a deeper shade to stay legible.
+    sunText: '#8C6A1E',
   },
   dark: {
     text: '#F3EDE2',
@@ -45,7 +49,7 @@ export const Colors = {
     ink2: '#AFA496',
     line: '#413A32',
     sun: '#E8C071',
-    clay: '#D98369',
+    clay: '#C4694F',
     sea: '#7F9FD4',
     sunSoft: '#3A3226',
     claySoft: '#3B2B26',
@@ -56,6 +60,8 @@ export const Colors = {
     claySoftLine: '#4D3830',
     seaSoftLine: '#33415A',
     onAccent: '#FFFFFF',
+    onSun: '#221F1B',
+    sunText: '#E8C071',
   },
 } as const;
 
@@ -114,17 +120,14 @@ export const Radius = {
 /** Fixed sizes the handoff calls out explicitly. */
 export const Size = {
   primaryButton: 54,
-  backButton: 36,
+  backButton: 44,
   languageRow: 62,
   ageCard: 112,
   moduleRow: 86,
   minTapTarget: 44,
   progressBar: 5,
-} as const;
-
-export const SafeArea = {
-  top: 60,
-  bottom: 28,
+  logo: 96,
+  tabBar: 56,
 } as const;
 
 // RN has no box-shadow: the CSS shadows become elevation + iOS shadow props.
@@ -154,7 +157,7 @@ export const Shadow: Record<'card' | 'lifted', ViewStyle> = {
  * boxes flex around them so the longer DE/PT translations still fit.
  */
 export const Type = {
-  ageNumber: { fontSize: 38, lineHeight: 38, fontFamily: FontFamily.extraBold },
+  ageNumber: { fontSize: 38, lineHeight: 46, fontFamily: FontFamily.extraBold },
   onboardingTitle: { fontSize: 25, lineHeight: 29, fontFamily: FontFamily.extraBold },
   badgeTitle: { fontSize: 23, lineHeight: 28, fontFamily: FontFamily.extraBold },
   sectionTitle: { fontSize: 20, lineHeight: 26, fontFamily: FontFamily.extraBold },

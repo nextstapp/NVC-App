@@ -6,7 +6,7 @@ import { ProgressBar } from '@/components/progress-bar';
 import { ScreenShell } from '@/components/screen-shell';
 import { ThemedText } from '@/components/themed-text';
 import { ToastMessage } from '@/components/toast-message';
-import { Radius, SafeArea, Shadow, Spacing, Type } from '@/constants/theme';
+import { Radius, Shadow, Spacing, Type } from '@/constants/theme';
 import { MODULES, getCopy } from '@/content/nvc-content';
 import { ModuleSkeleton } from '@/features/modules/module-skeleton';
 import { useTheme } from '@/hooks/use-theme';
@@ -20,6 +20,7 @@ export function ModulesScreen() {
   const [toast, setToast] = useState<string | null>(null);
   const copy = getCopy(locale ?? 'tr', age ?? 12);
   const states = moduleStates(progress);
+  const openModuleNo = MODULES.find((m) => states[m.id] === 'open')?.no ?? '';
 
   const dismissToast = useCallback(() => setToast(null), []);
 
@@ -31,6 +32,7 @@ export function ModulesScreen() {
       >
         <View style={styles.sectionRow}>
           <ThemedText style={[Type.sectionTitle, { color: theme.ink }]}>{copy.games}</ThemedText>
+          {__DEV__ ? <DevReset /> : null}
           <ThemedText style={[Type.small, { color: theme.ink2 }]}>{copy.unlockNote}</ThemedText>
         </View>
 
@@ -47,7 +49,7 @@ export function ModulesScreen() {
                   accessibilityRole="button"
                   accessibilityState={{ disabled: locked }}
                   onPress={() => {
-                    if (locked) return setToast(copy.lockedToast);
+                    if (locked) return setToast(copy.lockedToast.replace('{n}', openModuleNo));
                     if (module.id === PLAYABLE_MODULE) router.push('/games/seeing-clearly/brief');
                   }}
                   style={[
@@ -94,7 +96,7 @@ export function ModulesScreen() {
                   <View style={styles.status}>
                     {state === 'done' ? (
                       <View style={[styles.check, { backgroundColor: theme.sun }]}>
-                        <ThemedText style={[Type.small, { color: theme.onAccent }]}>✓</ThemedText>
+                        <ThemedText style={[Type.small, { color: theme.onSun }]}>✓</ThemedText>
                       </View>
                     ) : locked ? (
                       <LockGlyph color={theme.ink2} />
@@ -111,6 +113,25 @@ export function ModulesScreen() {
 
       {toast ? <ToastMessage message={toast} onDismiss={dismissToast} /> : null}
     </View>
+  );
+}
+
+/** Dev-only: wipes the persisted profile and restarts onboarding. Stripped from release builds. */
+function DevReset() {
+  const theme = useTheme();
+  const reset = useProfileStore((state) => state.reset);
+
+  return (
+    <Pressable
+      accessibilityRole="button"
+      onPress={() => {
+        reset();
+        router.replace('/onboarding/language');
+      }}
+      style={[styles.devReset, { backgroundColor: theme.claySoft, borderColor: theme.clay }]}
+    >
+      <ThemedText style={[Type.micro, { color: theme.clay }]}>DEV: sıfırla</ThemedText>
+    </Pressable>
   );
 }
 
@@ -151,8 +172,7 @@ function LockGlyph({ color }: { color: string }) {
 const styles = StyleSheet.create({
   root: { flex: 1 },
   header: {
-    // The shell only pads its scroll area, so the top bar owns the safe area.
-    paddingTop: SafeArea.top,
+    paddingTop: Spacing.three,
     paddingHorizontal: 18,
     flexDirection: 'row',
     alignItems: 'center',
@@ -178,13 +198,21 @@ const styles = StyleSheet.create({
   },
   diamond: { width: 8, height: 8, transform: [{ rotate: '45deg' }] },
   circle: { width: 9, height: 9, borderRadius: Radius.full },
+  devReset: {
+    marginLeft: 'auto',
+    marginRight: Spacing.two,
+    borderWidth: 1,
+    borderRadius: Radius.chip,
+    paddingVertical: Spacing.one,
+    paddingHorizontal: Spacing.two,
+  },
   sectionRow: {
     flexDirection: 'row',
     alignItems: 'baseline',
     justifyContent: 'space-between',
     marginBottom: Spacing.three,
   },
-  list: { gap: 10, paddingBottom: SafeArea.bottom },
+  list: { gap: 10, paddingBottom: Spacing.six },
   row: {
     borderRadius: Radius.panel,
     borderWidth: 1.5,

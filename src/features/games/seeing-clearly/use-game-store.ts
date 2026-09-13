@@ -32,6 +32,8 @@ type GameState = {
 
   pick: CardKey | null;
   matched: Pair[];
+  /** The two cards of the last wrong match, shown in clay for a beat. */
+  missed: CardKey[];
 
   selected: CardKey | null;
   placed: Partial<Record<CardKey, Zone>>;
@@ -42,12 +44,14 @@ type GameState = {
   selectCard: (key: CardKey) => void;
   dropOnZone: (zone: Zone, key?: CardKey) => void;
   clearWrong: () => void;
+  clearMissed: () => void;
   nextRound: () => void;
 };
 
 const roundState = {
   pick: null,
   matched: [] as Pair[],
+  missed: [] as CardKey[],
   selected: null,
   placed: {},
   wrong: null,
@@ -62,7 +66,8 @@ export const useGameStore = create<GameState>()((set, get) => ({
   startSession: () => set({ turn: 1, firstTryCount: 0, missedThisRound: false, ...roundState }),
 
   // First tap selects, tapping the same card clears it, and a second card either
-  // completes the pair or silently drops the selection. A miss costs nothing.
+  // completes the pair or flags both cards as a miss. A miss only costs the
+  // round its first-try credit.
   tapCard: (key) => {
     const { pick, matched } = get();
     const card = DECK.find((c) => c.key === key);
@@ -77,7 +82,7 @@ export const useGameStore = create<GameState>()((set, get) => ({
       return set({ pick: null, matched: [...matched, card.pair] });
     }
 
-    set({ pick: null, missedThisRound: true });
+    set({ pick: null, missed: [pick, key], missedThisRound: true });
   },
 
   selectCard: (key) => set({ selected: get().selected === key ? null : key }),
@@ -95,11 +100,12 @@ export const useGameStore = create<GameState>()((set, get) => ({
       }));
     }
 
-    // Wrong side: the card shakes back, nothing is deducted.
+    // Wrong side: the card shakes back; the round loses its first-try credit.
     set({ wrong: card.key, selected: null, missedThisRound: true });
   },
 
   clearWrong: () => set({ wrong: null }),
+  clearMissed: () => set({ missed: [] }),
 
   nextRound: () =>
     set((state) => ({

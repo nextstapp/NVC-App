@@ -7,8 +7,10 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 import { ThemedText } from '@/components/themed-text';
-import { Radius, Shadow, Spacing, Type } from '@/constants/theme';
+import { Radius, Shadow, Size, Spacing, Type } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
 export const TOAST_DURATION = 2200;
@@ -21,6 +23,7 @@ type Props = { message: string; onDismiss: () => void };
  */
 export function ToastMessage({ message, onDismiss }: Props) {
   const theme = useTheme();
+  const insets = useSafeAreaInsets();
   const progress = useSharedValue(0);
 
   useEffect(() => {
@@ -39,7 +42,12 @@ export function ToastMessage({ message, onDismiss }: Props) {
     <Animated.View
       exiting={FadeOutDown}
       pointerEvents="none"
-      style={[styles.wrapper, animatedStyle, { backgroundColor: theme.ink }, Shadow.lifted]}
+      style={[
+        styles.wrapper,
+        animatedStyle,
+        { backgroundColor: theme.ink, bottom: Size.tabBar + insets.bottom + Spacing.two },
+        Shadow.lifted,
+      ]}
     >
       <View style={[styles.icon, { backgroundColor: theme.sun }]} />
       <ThemedText style={[Type.toast, { color: theme.bg }]}>{message}</ThemedText>
@@ -52,7 +60,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 18,
     right: 18,
-    bottom: 92,
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.three,

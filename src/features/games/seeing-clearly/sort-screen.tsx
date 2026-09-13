@@ -35,7 +35,8 @@ type Rect = { x: number; y: number; width: number; height: number };
 export function SortScreen() {
   const theme = useTheme();
   const { locale, age } = useProfileStore();
-  const { selected, placed, wrong, selectCard, dropOnZone, clearWrong } = useGameStore();
+  const { selected, placed, wrong, missedThisRound, selectCard, dropOnZone, clearWrong } =
+    useGameStore();
   const copy = getCopy(locale ?? 'tr', age ?? 12);
   const solved = Object.keys(placed).length === SORT_CARDS.length;
 
@@ -127,9 +128,18 @@ export function SortScreen() {
       </View>
 
       <View style={styles.hint}>
-        <View style={[styles.hintDot, { backgroundColor: theme.sea }]} />
-        <ThemedText style={[Type.micro, styles.hintText, { color: theme.ink2 }]}>
-          {copy.sortHint}
+        <View
+          style={[styles.hintDot, { backgroundColor: missedThisRound ? theme.clay : theme.sea }]}
+        />
+        <ThemedText
+          accessibilityLiveRegion="polite"
+          style={[
+            Type.micro,
+            styles.hintText,
+            { color: missedThisRound ? theme.clay : theme.ink2 },
+          ]}
+        >
+          {missedThisRound ? copy.sortMiss : copy.sortHint}
         </ThemedText>
       </View>
     </ScreenShell>

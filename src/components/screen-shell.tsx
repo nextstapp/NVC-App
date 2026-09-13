@@ -1,8 +1,9 @@
 import type { ReactNode } from 'react';
 import { Pressable, ScrollView, StyleSheet, View, type ViewStyle } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/themed-text';
-import { Radius, SafeArea, Size, Spacing, Type } from '@/constants/theme';
+import { Radius, Size, Spacing, Type } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
 type Props = {
@@ -18,7 +19,9 @@ type Props = {
 
 /**
  * Every screen is the same skeleton: [top bar] + [scrollable content] + [pinned
- * action area]. Content scrolls, the action never does.
+ * action area]. Content scrolls, the action never does. The shell owns the safe
+ * area: top/side insets on the root, the bottom inset under the action area (a
+ * tab bar covers the bottom on screens without one).
  */
 export function ScreenShell({
   children,
@@ -29,9 +32,13 @@ export function ScreenShell({
   contentStyle,
 }: Props) {
   const theme = useTheme();
+  const insets = useSafeAreaInsets();
 
   return (
-    <View style={[styles.root, { backgroundColor: theme.bg }]}>
+    <SafeAreaView
+      edges={['top', 'left', 'right']}
+      style={[styles.root, { backgroundColor: theme.bg }]}
+    >
       {topBar}
       <ScrollView
         style={styles.scroll}
@@ -46,12 +53,19 @@ export function ScreenShell({
       </ScrollView>
       {action ? (
         <View
-          style={[styles.action, { borderTopColor: theme.line, paddingHorizontal: horizontal }]}
+          style={[
+            styles.action,
+            {
+              borderTopColor: theme.line,
+              paddingHorizontal: horizontal,
+              paddingBottom: Math.max(insets.bottom, Spacing.three),
+            },
+          ]}
         >
           {action}
         </View>
       ) : null}
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -74,7 +88,9 @@ export function TopBar({ onBack, children, horizontal = Spacing.five + 2 }: TopB
           hitSlop={Spacing.two}
           style={[styles.back, { borderColor: theme.line }]}
         >
-          <ThemedText style={[Type.bodyStrong, { color: theme.ink }]}>‹</ThemedText>
+          <ThemedText style={[Type.onboardingTitle, styles.backGlyph, { color: theme.ink }]}>
+            ‹
+          </ThemedText>
         </Pressable>
       ) : null}
       {children}
@@ -89,11 +105,10 @@ const styles = StyleSheet.create({
   action: {
     borderTopWidth: 1,
     paddingTop: Spacing.three,
-    paddingBottom: SafeArea.bottom,
     gap: 9,
   },
   topBar: {
-    paddingTop: SafeArea.top,
+    paddingTop: Spacing.three,
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.three,
@@ -106,4 +121,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  // Optical centre: the chevron glyph sits low in its box.
+  backGlyph: { marginTop: -Spacing.one },
 });

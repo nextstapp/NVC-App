@@ -1,7 +1,7 @@
 import { Tabs } from 'expo-router';
 import { StyleSheet, View, type ColorValue } from 'react-native';
 
-import { FontFamily, Radius, SafeArea, Type } from '@/constants/theme';
+import { FontFamily, Radius, Type } from '@/constants/theme';
 import { getCopy } from '@/content/nvc-content';
 import { useTheme } from '@/hooks/use-theme';
 import { useProfileStore } from '@/stores/use-profile-store';
@@ -40,9 +40,8 @@ export default function TabsLayout() {
           backgroundColor: theme.surface,
           borderTopColor: theme.line,
           borderTopWidth: 1,
-          height: 56 + SafeArea.bottom,
+          // React Navigation adds the bottom inset itself; only the top padding is ours.
           paddingTop: 8,
-          paddingBottom: SafeArea.bottom,
           paddingHorizontal: 10,
         },
         tabBarLabelStyle: { fontFamily: FontFamily.extraBold, fontSize: Type.tabLabel.fontSize },
@@ -58,6 +57,9 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="practice"
         options={{
+          // ponytail: no Practice design yet — hidden from the bar, route kept so
+          // the tab reappears by deleting this line.
+          href: null,
           title: copy.tabs.practice,
           tabBarIcon: ({ color }) => <TabIcon shape="circle" color={color} />,
         }}
@@ -72,6 +74,8 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="me"
         options={{
+          // ponytail: no Me design yet — hidden like Practice.
+          href: null,
           title: copy.tabs.me,
           tabBarIcon: ({ color }) => <TabIcon shape="ring" color={color} />,
         }}

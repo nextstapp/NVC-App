@@ -13,11 +13,12 @@ import { useProfileStore } from '@/stores/use-profile-store';
 
 const HORIZONTAL = Spacing.five;
 const ADVANCE_DELAY = 550;
+const MISS_FLASH = 300;
 
 export function MatchScreen() {
   const theme = useTheme();
   const { locale, age } = useProfileStore();
-  const { pick, matched, tapCard } = useGameStore();
+  const { pick, matched, missed, missedThisRound, tapCard, clearMissed } = useGameStore();
   const copy = getCopy(locale ?? 'tr', age ?? 12);
   const solved = matched.length === 2;
 
@@ -28,6 +29,14 @@ export function MatchScreen() {
 
     return () => clearTimeout(timer);
   }, [solved]);
+
+  useEffect(() => {
+    if (missed.length === 0) return;
+
+    const timer = setTimeout(clearMissed, MISS_FLASH);
+
+    return () => clearTimeout(timer);
+  }, [missed, clearMissed]);
 
   return (
     <ScreenShell
@@ -53,6 +62,7 @@ export function MatchScreen() {
 
         {DECK.filter((card) => !matched.includes(card.pair)).map((card) => {
           const isPicked = pick === card.key;
+          const isMissed = missed.includes(card.key);
 
           return (
             <Pressable
@@ -63,9 +73,9 @@ export function MatchScreen() {
               style={[
                 styles.card,
                 {
-                  backgroundColor: theme.surface,
-                  borderColor: isPicked ? theme.sea : theme.line,
-                  borderWidth: isPicked ? 2 : 1.5,
+                  backgroundColor: isMissed ? theme.claySoft : theme.surface,
+                  borderColor: isMissed ? theme.clay : isPicked ? theme.sea : theme.line,
+                  borderWidth: isPicked || isMissed ? 2 : 1.5,
                 },
                 isPicked ? [Shadow.lifted, styles.lifted] : Shadow.card,
               ]}
@@ -79,9 +89,22 @@ export function MatchScreen() {
       </View>
 
       <View style={styles.hint}>
-        <View style={[styles.hintDot, { backgroundColor: theme.sun }]} />
-        <ThemedText style={[Type.micro, styles.hintText, { color: theme.ink2 }]}>
-          {matched.length === 1 ? copy.matchHintLast : copy.matchHint}
+        <View
+          style={[styles.hintDot, { backgroundColor: missedThisRound ? theme.clay : theme.sun }]}
+        />
+        <ThemedText
+          accessibilityLiveRegion="polite"
+          style={[
+            Type.micro,
+            styles.hintText,
+            { color: missedThisRound ? theme.clay : theme.ink2 },
+          ]}
+        >
+          {missedThisRound && !solved
+            ? copy.matchMiss
+            : matched.length === 1
+              ? copy.matchHintLast
+              : copy.matchHint}
         </ThemedText>
       </View>
     </ScreenShell>
@@ -110,7 +133,7 @@ function MatchedCard({
     >
       <View style={styles.matchedHeader}>
         <View style={[styles.matchedCheck, { backgroundColor: theme.sun }]}>
-          <ThemedText style={[Type.small, { color: theme.onAccent }]}>✓</ThemedText>
+          <ThemedText style={[Type.small, { color: theme.onSun }]}>✓</ThemedText>
         </View>
         <ThemedText style={[Type.overline, { color: theme.ink2 }]}>{label}</ThemedText>
       </View>

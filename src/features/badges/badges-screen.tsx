@@ -20,7 +20,7 @@ export function BadgesScreen() {
           {badges.map((badge) => (
             <View key={badge} style={[styles.badge, { backgroundColor: theme.sun }, Shadow.card]}>
               <View style={[styles.badgeDot, { backgroundColor: theme.surface }]} />
-              <ThemedText style={[Type.overline, { color: theme.onAccent }]}>{badge}</ThemedText>
+              <ThemedText style={[Type.overline, { color: theme.onSun }]}>{badge}</ThemedText>
             </View>
           ))}
         </View>
