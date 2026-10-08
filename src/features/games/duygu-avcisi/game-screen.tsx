@@ -7,9 +7,9 @@ import { WebView, type WebViewMessageEvent } from 'react-native-webview';
 
 import { ThemedText } from '@/components/themed-text';
 import { Radius, Size, Spacing, Type } from '@/constants/theme';
-import { getAppCopy } from '@/content/app-copy';
+import { getAppCopy, SITE_URL } from '@/content/app-copy';
 import { GAME_HTML } from '@/features/games/duygu-avcisi/game-html.generated';
-import { parseGameMessage } from '@/features/games/duygu-avcisi/game-message';
+import { type GameStat, parseGameMessage } from '@/features/games/duygu-avcisi/game-message';
 import { useTheme, useThemeName } from '@/hooks/use-theme';
 import { useProfileStore } from '@/stores/use-profile-store';
 import { useSessionsStore } from '@/stores/use-sessions-store';
@@ -25,6 +25,19 @@ function withEmbedConfig(config: object): string {
     /<head[^>]*>/i,
     (head) => `${head}<script>window.NVC_EMBED=${JSON.stringify(config)};</script>`,
   );
+}
+
+/**
+ * Counts a play for the project's usage report; dev builds don't count.
+ * ponytail: fire-and-forget, plays made offline are lost; queue them if the report needs those.
+ */
+function sendStat(stat: GameStat) {
+  if (__DEV__) return;
+  fetch(`${SITE_URL}/api/games/duygu-avcisi/stats`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify({ ...stat, source: 'app' }),
+  }).catch(() => {});
 }
 
 export function DuyguAvcisiScreen() {
@@ -66,6 +79,7 @@ export function DuyguAvcisiScreen() {
     if (msg?.type === 'screen') setScreen(msg.screen);
     if (msg?.type === 'sound') setSoundEnabled(msg.enabled);
     if (msg?.type === 'finished') addSession(msg.result);
+    if (msg?.type === 'stat') sendStat(msg.stat);
   };
 
   const restart = () => {

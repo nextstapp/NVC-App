@@ -5,7 +5,16 @@ export type GameMessage =
   | { type: 'ready' }
   | { type: 'screen'; screen: string }
   | { type: 'sound'; enabled: boolean }
-  | { type: 'finished'; result: GameSession };
+  | { type: 'finished'; result: GameSession }
+  | { type: 'stat'; stat: GameStat };
+
+/** Anonymous play count the app forwards to the website (see `/api/games/[slug]/stats`). */
+export type GameStat = {
+  event: 'start' | 'finish';
+  lang: string;
+  mode: 'single' | 'team';
+  teams: number;
+};
 
 const BADGES = ['diamond', 'gold', 'silver', 'bronze'];
 
@@ -36,6 +45,18 @@ function isSession(value: unknown): value is GameSession {
   );
 }
 
+function isStat(value: unknown): value is GameStat {
+  if (typeof value !== 'object' || value === null) return false;
+  const r = value as Record<string, unknown>;
+
+  return (
+    (r.event === 'start' || r.event === 'finish') &&
+    typeof r.lang === 'string' &&
+    (r.mode === 'single' || r.mode === 'team') &&
+    Number.isInteger(r.teams)
+  );
+}
+
 /** The WebView is a trust boundary: anything malformed is dropped, never stored. */
 export function parseGameMessage(data: string): GameMessage | null {
   let msg: Record<string, unknown>;
@@ -55,6 +76,8 @@ export function parseGameMessage(data: string): GameMessage | null {
       return typeof msg.enabled === 'boolean' ? { type: 'sound', enabled: msg.enabled } : null;
     case 'finished':
       return isSession(msg.result) ? { type: 'finished', result: msg.result } : null;
+    case 'stat':
+      return isStat(msg.stat) ? { type: 'stat', stat: msg.stat } : null;
     default:
       return null;
   }
