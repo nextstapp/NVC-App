@@ -57,7 +57,7 @@ export { MemoryGameScreen as default } from '@/features/games/memory/memory-game
 - Path alias `@/*` → `src/*`; always import via the alias, never relative `../../`.
 - TypeScript strict; no `any`, no `@ts-ignore` without a one-line reason.
 - New dependency = last resort. Order: React/React Native built-in → Expo SDK package → already-installed dependency → new package. RN-native packages install via `bunx expo install`, never plain `bun add`.
-- No backend, no network calls. Everything is local.
+- No backend, no network calls. Everything is local. One exception: the anonymous play counter in `game-screen.tsx` (`sendStat`) posts to the website; it stays fire-and-forget and must never block or break play.
 
 ## Quality gates — run before every commit
 
