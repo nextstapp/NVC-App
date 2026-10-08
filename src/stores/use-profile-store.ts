@@ -2,20 +2,15 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
-import {
-  MODULES,
-  ROUNDS_PER_SESSION,
-  type Age,
-  type Locale,
-  type ModuleState,
-} from '@/content/nvc-content';
+import { MODULES, ROUNDS_PER_SESSION, type Locale, type ModuleState } from '@/content/nvc-content';
 import { deviceLocale } from '@/lib/device-locale';
 
 export type ThemePreference = 'system' | 'light' | 'dark';
 
 type ProfileState = {
   locale: Locale;
-  age: Age | null;
+  /** Set once the language screen's Continue is pressed. */
+  onboarded: boolean;
   themePreference: ThemePreference;
   /** Completed rounds per module id. */
   progress: Record<string, number>;
@@ -25,7 +20,7 @@ type ProfileState = {
   hydrated: boolean;
 
   setLocale: (locale: Locale) => void;
-  setAge: (age: Age) => void;
+  completeOnboarding: () => void;
   setThemePreference: (themePreference: ThemePreference) => void;
   completeSession: (moduleId: string, firstTryCount: number) => void;
   awardBadge: (badge: string) => void;
@@ -43,7 +38,7 @@ export const useProfileStore = create<ProfileState>()(
   persist(
     (set) => ({
       locale: deviceLocale(),
-      age: null,
+      onboarded: false,
       themePreference: 'system',
       progress: INITIAL_PROGRESS,
       badges: [],
@@ -51,7 +46,7 @@ export const useProfileStore = create<ProfileState>()(
       hydrated: false,
 
       setLocale: (locale) => set({ locale }),
-      setAge: (age) => set({ age }),
+      completeOnboarding: () => set({ onboarded: true }),
       setThemePreference: (themePreference) => set({ themePreference }),
 
       completeSession: (moduleId, firstTryCount) =>
@@ -76,7 +71,7 @@ export const useProfileStore = create<ProfileState>()(
       reset: () =>
         set({
           locale: deviceLocale(),
-          age: null,
+          onboarded: false,
           progress: INITIAL_PROGRESS,
           badges: [],
           previousScore: null,
@@ -85,6 +80,19 @@ export const useProfileStore = create<ProfileState>()(
     {
       name: 'profile',
       storage: createJSONStorage(() => AsyncStorage),
+      // v1: Estonian moved from "ee" to the ISO code "et"; the age step is gone,
+      // and a profile that had finished it counts as onboarded.
+      version: 1,
+      migrate: (persisted, version) => {
+        if (version >= 1) return persisted as ProfileState;
+        const { age, ...saved } = persisted as Record<string, unknown>;
+
+        return {
+          ...saved,
+          locale: saved.locale === 'ee' ? 'et' : saved.locale,
+          onboarded: age != null,
+        } as ProfileState;
+      },
       // Rehydration is async; the router waits on `hydrated` so it never bounces
       // an already-onboarded user back to the language screen on cold start.
       onRehydrateStorage: () => () => useProfileStore.setState({ hydrated: true }),

@@ -3,7 +3,7 @@ import { Pressable, ScrollView, StyleSheet, View, type ViewStyle } from 'react-n
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/themed-text';
-import { Radius, Size, Spacing, Type } from '@/constants/theme';
+import { MaxContentWidth, Radius, Size, Spacing, Type } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
 type Props = {
@@ -39,32 +39,35 @@ export function ScreenShell({
       edges={['top', 'left', 'right']}
       style={[styles.root, { backgroundColor: theme.bg }]}
     >
-      {topBar}
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={[
-          { paddingHorizontal: horizontal, paddingBottom: Spacing.two },
-          centered && styles.centered,
-          contentStyle,
-        ]}
-        showsVerticalScrollIndicator={false}
-      >
-        {children}
-      </ScrollView>
-      {action ? (
-        <View
-          style={[
-            styles.action,
-            {
-              borderTopColor: theme.line,
-              paddingHorizontal: horizontal,
-              paddingBottom: Math.max(insets.bottom, Spacing.three),
-            },
+      {/* Tablets and landscape phones: one centred column, never a stretched line. */}
+      <View style={styles.column}>
+        {topBar}
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={[
+            { paddingHorizontal: horizontal, paddingBottom: Spacing.two },
+            centered && styles.centered,
+            contentStyle,
           ]}
+          showsVerticalScrollIndicator={false}
         >
-          {action}
-        </View>
-      ) : null}
+          {children}
+        </ScrollView>
+        {action ? (
+          <View
+            style={[
+              styles.action,
+              {
+                borderTopColor: theme.line,
+                paddingHorizontal: horizontal,
+                paddingBottom: Math.max(insets.bottom, Spacing.three),
+              },
+            ]}
+          >
+            {action}
+          </View>
+        ) : null}
+      </View>
     </SafeAreaView>
   );
 }
@@ -100,6 +103,7 @@ export function TopBar({ onBack, children, horizontal = Spacing.five + 2 }: TopB
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
+  column: { flex: 1, width: '100%', maxWidth: MaxContentWidth, alignSelf: 'center' },
   scroll: { flex: 1 },
   centered: { flexGrow: 1, justifyContent: 'center' },
   action: {

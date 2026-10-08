@@ -15,9 +15,9 @@ const MODULE = MODULES[1];
 
 export function BriefScreen() {
   const theme = useTheme();
-  const { locale, age } = useProfileStore();
+  const locale = useProfileStore((state) => state.locale);
   const startSession = useGameStore((state) => state.startSession);
-  const copy = getCopy(locale ?? 'tr', age ?? 12);
+  const copy = getCopy(locale);
 
   return (
     <ScreenShell

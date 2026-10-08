@@ -3,12 +3,16 @@
     "name": "NVC App",
     "slug": "nvc-app",
     "version": "1.0.0",
-    "orientation": "portrait",
+    "orientation": "default",
     "icon": "./assets/images/icon.png",
     "scheme": "nvcapp",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "bundleIdentifier": "com.nextstapp.nvcapp"
+      "bundleIdentifier": "com.nextstapp.nvcapp",
+      "supportsTablet": true,
+      "config": {
+        "usesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {

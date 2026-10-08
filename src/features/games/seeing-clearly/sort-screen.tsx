@@ -34,10 +34,10 @@ type Rect = { x: number; y: number; width: number; height: number };
 
 export function SortScreen() {
   const theme = useTheme();
-  const { locale, age } = useProfileStore();
+  const locale = useProfileStore((state) => state.locale);
   const { selected, placed, wrong, missedThisRound, selectCard, dropOnZone, clearWrong } =
     useGameStore();
-  const copy = getCopy(locale ?? 'tr', age ?? 12);
+  const copy = getCopy(locale);
   const solved = Object.keys(placed).length === SORT_CARDS.length;
 
   // Window-space rectangles for the two targets, so a released card can be

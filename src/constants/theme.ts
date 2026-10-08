@@ -122,12 +122,20 @@ export const Size = {
   primaryButton: 54,
   backButton: 44,
   languageRow: 62,
-  ageCard: 112,
   moduleRow: 86,
   minTapTarget: 44,
   progressBar: 5,
   logo: 96,
   tabBar: 56,
+  headerLogo: 40,
+  euLogoWidth: 220,
+  settingsRow: 52,
+} as const;
+
+/** Width / height of bundled artwork, so images keep their shape at any width. */
+export const AspectRatio = {
+  cover: 1280 / 721,
+  euLogo: 4119 / 919,
 } as const;
 
 // RN has no box-shadow: the CSS shadows become elevation + iOS shadow props.
@@ -157,7 +165,6 @@ export const Shadow: Record<'card' | 'lifted', ViewStyle> = {
  * boxes flex around them so the longer DE/PT translations still fit.
  */
 export const Type = {
-  ageNumber: { fontSize: 38, lineHeight: 46, fontFamily: FontFamily.extraBold },
   onboardingTitle: { fontSize: 25, lineHeight: 29, fontFamily: FontFamily.extraBold },
   badgeTitle: { fontSize: 23, lineHeight: 28, fontFamily: FontFamily.extraBold },
   sectionTitle: { fontSize: 20, lineHeight: 26, fontFamily: FontFamily.extraBold },

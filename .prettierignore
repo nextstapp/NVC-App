@@ -5,3 +5,4 @@ android
 ios
 package-lock.json
 .impeccable/
+src/features/games/duygu-avcisi/game-html.generated.ts

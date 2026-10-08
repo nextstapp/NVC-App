@@ -7,6 +7,6 @@ module.exports = defineConfig([
   expoConfig,
   prettierConfig,
   {
-    ignores: ['dist/*'],
+    ignores: ['dist/*', 'src/features/games/duygu-avcisi/game-html.generated.ts'],
   },
 ]);

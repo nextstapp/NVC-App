@@ -24,9 +24,9 @@ const BADGE = 'observer';
 
 export function ResultScreen() {
   const theme = useTheme();
-  const { locale, age, previousScore, completeSession, awardBadge } = useProfileStore();
+  const { locale, previousScore, completeSession, awardBadge } = useProfileStore();
   const { firstTryCount, startSession } = useGameStore();
-  const copy = getCopy(locale ?? 'tr', age ?? 12);
+  const copy = getCopy(locale);
 
   // Snapshot the old score BEFORE the effect overwrites it — "last time" must
   // mean the previous session, not the one being banked right now.

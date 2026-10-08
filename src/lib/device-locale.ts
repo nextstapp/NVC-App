@@ -7,8 +7,6 @@ import { LOCALES, type Locale } from '@/content/nvc-content';
  */
 export function deviceLocale(): Locale {
   const lang = Intl.DateTimeFormat().resolvedOptions().locale.split('-')[0].toLowerCase();
-  // The app keys Estonian as "ee"; the OS reports the ISO code "et".
-  const key = lang === 'et' ? 'ee' : lang;
 
-  return (LOCALES as readonly string[]).includes(key) ? (key as Locale) : 'en';
+  return (LOCALES as readonly string[]).includes(lang) ? (lang as Locale) : 'en';
 }

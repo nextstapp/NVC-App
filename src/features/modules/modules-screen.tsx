@@ -16,9 +16,9 @@ const PLAYABLE_MODULE = 'seeing-clearly';
 
 export function ModulesScreen() {
   const theme = useTheme();
-  const { locale, age, progress, hydrated } = useProfileStore();
+  const { locale, progress, hydrated } = useProfileStore();
   const [toast, setToast] = useState<string | null>(null);
-  const copy = getCopy(locale ?? 'tr', age ?? 12);
+  const copy = getCopy(locale);
   const states = moduleStates(progress);
   const openModuleNo = MODULES.find((m) => states[m.id] === 'open')?.no ?? '';
 
@@ -26,13 +26,9 @@ export function ModulesScreen() {
 
   return (
     <View style={styles.root}>
-      <ScreenShell
-        horizontal={18}
-        topBar={<Header greeting={copy.hello} streakless={copy.streakless} />}
-      >
+      <ScreenShell horizontal={18} contentStyle={styles.content}>
         <View style={styles.sectionRow}>
           <ThemedText style={[Type.sectionTitle, { color: theme.ink }]}>{copy.games}</ThemedText>
-          {__DEV__ ? <DevReset /> : null}
           <ThemedText style={[Type.small, { color: theme.ink2 }]}>{copy.unlockNote}</ThemedText>
         </View>
 
@@ -116,49 +112,6 @@ export function ModulesScreen() {
   );
 }
 
-/** Dev-only: wipes the persisted profile and restarts onboarding. Stripped from release builds. */
-function DevReset() {
-  const theme = useTheme();
-  const reset = useProfileStore((state) => state.reset);
-
-  return (
-    <Pressable
-      accessibilityRole="button"
-      onPress={() => {
-        reset();
-        router.replace('/onboarding/language');
-      }}
-      style={[styles.devReset, { backgroundColor: theme.claySoft, borderColor: theme.clay }]}
-    >
-      <ThemedText style={[Type.micro, { color: theme.clay }]}>DEV: sıfırla</ThemedText>
-    </Pressable>
-  );
-}
-
-function Header({ greeting, streakless }: { greeting: string; streakless: string }) {
-  const theme = useTheme();
-
-  return (
-    <View style={styles.header}>
-      <View style={[styles.avatar, { backgroundColor: theme.seaSoft, borderColor: theme.line }]}>
-        <ThemedText style={[Type.cardSentence, { color: theme.sea }]}>AY</ThemedText>
-      </View>
-      <View style={styles.greeting}>
-        <ThemedText style={[Type.rowTitle, { color: theme.ink }]}>{greeting}</ThemedText>
-        <ThemedText style={[Type.micro, { color: theme.ink2 }]}>{streakless}</ThemedText>
-      </View>
-      <View style={[styles.chip, { backgroundColor: theme.sunSoft }]}>
-        <View style={[styles.diamond, { backgroundColor: theme.sun }]} />
-        <ThemedText style={[Type.mono, { color: theme.ink }]}>340</ThemedText>
-      </View>
-      <View style={[styles.chip, { backgroundColor: theme.claySoft }]}>
-        <View style={[styles.circle, { backgroundColor: theme.clay }]} />
-        <ThemedText style={[Type.mono, { color: theme.ink }]}>2</ThemedText>
-      </View>
-    </View>
-  );
-}
-
 /** 15×11 body with an 8px arch — a lock, drawn without an icon dependency. */
 function LockGlyph({ color }: { color: string }) {
   return (
@@ -171,41 +124,7 @@ function LockGlyph({ color }: { color: string }) {
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  header: {
-    paddingTop: Spacing.three,
-    paddingHorizontal: 18,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.two,
-    paddingBottom: Spacing.three,
-  },
-  avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: Radius.info,
-    borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  greeting: { flex: 1 },
-  chip: {
-    height: 30,
-    borderRadius: Radius.chip,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 5,
-    paddingHorizontal: Spacing.two,
-  },
-  diamond: { width: 8, height: 8, transform: [{ rotate: '45deg' }] },
-  circle: { width: 9, height: 9, borderRadius: Radius.full },
-  devReset: {
-    marginLeft: 'auto',
-    marginRight: Spacing.two,
-    borderWidth: 1,
-    borderRadius: Radius.chip,
-    paddingVertical: Spacing.one,
-    paddingHorizontal: Spacing.two,
-  },
+  content: { paddingTop: Spacing.three },
   sectionRow: {
     flexDirection: 'row',
     alignItems: 'baseline',

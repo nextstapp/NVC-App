@@ -17,9 +17,9 @@ const MISS_FLASH = 300;
 
 export function MatchScreen() {
   const theme = useTheme();
-  const { locale, age } = useProfileStore();
+  const locale = useProfileStore((state) => state.locale);
   const { pick, matched, missed, missedThisRound, tapCard, clearMissed } = useGameStore();
-  const copy = getCopy(locale ?? 'tr', age ?? 12);
+  const copy = getCopy(locale);
   const solved = matched.length === 2;
 
   useEffect(() => {

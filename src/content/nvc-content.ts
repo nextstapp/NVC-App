@@ -1,39 +1,24 @@
 import type { Tone } from '@/constants/theme';
 
-export const LOCALES = ['tr', 'it', 'ee', 'pt', 'de', 'en'] as const;
+export const LOCALES = ['tr', 'it', 'et', 'pt', 'de', 'en'] as const;
 export type Locale = (typeof LOCALES)[number];
 
 export const LANGUAGES: { locale: Locale; code: string; name: string }[] = [
   { locale: 'tr', code: 'TR', name: 'Türkçe' },
   { locale: 'it', code: 'IT', name: 'Italiano' },
-  { locale: 'ee', code: 'EE', name: 'Eesti' },
+  { locale: 'et', code: 'ET', name: 'Eesti' },
   { locale: 'pt', code: 'PT', name: 'Português' },
   { locale: 'de', code: 'DE', name: 'Deutsch' },
   { locale: 'en', code: 'EN', name: 'English' },
 ];
 
-export const AGES = [12, 13, 14, 15] as const;
-export type Age = (typeof AGES)[number];
-
-/** Content comes in two densities; 12–13 read the short set, 14–15 the long one. */
+/** Module 2 content comes in two densities: a short set (12) and a long one (15). */
 export type Density = 12 | 15;
-
-export function densityForAge(age: Age): Density {
-  return age <= 13 ? 12 : 15;
-}
 
 type CommonCopy = {
   next: string;
   start: string;
   games: string;
-  hello: string;
-  streakless: string;
-  langTitle: string;
-  langSub: string;
-  ageTitle: string;
-  ageSub: string;
-  ageNote: string;
-  ageHints: Record<Age, string>;
   unlockNote: string;
   moduleLabel: string;
   rule: string;
@@ -66,7 +51,6 @@ type CommonCopy = {
   emptySub: string;
   emptyCta: string;
   lockedToast: string;
-  tabs: { games: string; practice: string; badges: string; me: string };
 };
 
 type DensityCopy = {
@@ -96,20 +80,6 @@ const tr: CommonCopy = {
   next: 'Devam',
   start: 'Başla',
   games: 'Oyunlar',
-  hello: 'Merhaba, Ada',
-  streakless: 'İstediğin hızda ilerle',
-  langTitle: 'Dilini seç',
-  langSub: 'Uygulamayı hangi dilde kullanmak istersin?',
-  ageTitle: 'Kaç yaşındasın?',
-  ageSub: 'İçeriği yaşına göre ayarlıyoruz.',
-  ageNote:
-    'Doğru ya da yanlış cevap yok — sadece senin için uygun senaryoları seçiyoruz. Sonradan değiştirebilirsin.',
-  ageHints: {
-    12: 'daha kısa, somut senaryolar',
-    13: 'somut senaryolar',
-    14: 'daha nüanslı durumlar',
-    15: 'çok katmanlı çatışmalar',
-  },
   unlockNote: 'Sırayla açılır',
   moduleLabel: 'Modül',
   rule: 'Kamera ne kaydedebilir? Sadece onu gördün say.',
@@ -145,7 +115,6 @@ const tr: CommonCopy = {
   emptyCta: 'Oyunlara git',
   /** `{n}` is the number of the module that is currently open. */
   lockedToast: 'Sırada Modül {n} var, önce onu bitir',
-  tabs: { games: 'Oyunlar', practice: 'Pratik', badges: 'Rozetler', me: 'Ben' },
 };
 
 const trDensity: Record<Density, DensityCopy> = {
@@ -206,41 +175,22 @@ const trDensity: Record<Density, DensityCopy> = {
 // back to Turkish for the rest, so a translation can land one key at a time.
 const COMMON: Partial<Record<Locale, Partial<CommonCopy>>> = {
   tr,
-  en: {
-    next: 'Continue',
-    langTitle: 'Choose your language',
-    langSub: 'Which language do you want to use the app in?',
-  },
-  de: {
-    next: 'Weiter',
-    langTitle: 'Wähle deine Sprache',
-    langSub: 'In welcher Sprache möchtest du die App nutzen?',
-  },
-  it: {
-    next: 'Avanti',
-    langTitle: 'Scegli la tua lingua',
-    langSub: "In quale lingua vuoi usare l'app?",
-  },
-  pt: {
-    next: 'Continuar',
-    langTitle: 'Escolhe a tua língua',
-    langSub: 'Em que língua queres usar a app?',
-  },
-  ee: {
-    next: 'Edasi',
-    langTitle: 'Vali oma keel',
-    langSub: 'Mis keeles soovid rakendust kasutada?',
-  },
+  en: { next: 'Continue' },
+  de: { next: 'Weiter' },
+  it: { next: 'Avanti' },
+  pt: { next: 'Continuar' },
+  et: { next: 'Edasi' },
 };
 const BY_DENSITY: Partial<Record<Locale, Record<Density, DensityCopy>>> = { tr: trDensity };
 
 export type Copy = CommonCopy & DensityCopy;
 
-export function getCopy(locale: Locale, age: Age): Copy {
+/** Teachers read the fuller density by default. */
+export function getCopy(locale: Locale, density: Density = 15): Copy {
   const common = { ...tr, ...COMMON[locale] };
-  const density = (BY_DENSITY[locale] ?? trDensity)[densityForAge(age)];
+  const densityCopy = (BY_DENSITY[locale] ?? trDensity)[density];
 
-  return { ...common, ...density };
+  return { ...common, ...densityCopy };
 }
 
 export type ModuleState = 'done' | 'open' | 'locked';

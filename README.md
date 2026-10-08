@@ -21,6 +21,7 @@ bun run web          # expo start --web
 bun run lint         # eslint (eslint-config-expo + prettier)
 bun run typecheck    # tsc --noEmit (strict)
 bun run format       # prettier --write .
+bun run sync:game    # re-inline ../website/public/games/duygu-avcisi into the app (commit the result)
 ```
 
 ## Structure

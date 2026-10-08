@@ -10,7 +10,7 @@ import {
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
-import { StyleSheet } from 'react-native';
+import { StatusBar, StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { useThemeName } from '@/hooks/use-theme';
@@ -43,7 +43,12 @@ export default function RootLayout() {
     // Required for the drag gestures on the sort screen.
     <GestureHandlerRootView style={styles.root}>
       <ThemeProvider value={themeName === 'dark' ? DarkTheme : DefaultTheme}>
-        <Stack screenOptions={{ headerShown: false }} />
+        {/* Follows the in-app theme setting, which can differ from the system one. */}
+        <StatusBar barStyle={themeName === 'dark' ? 'light-content' : 'dark-content'} />
+        <Stack screenOptions={{ headerShown: false }}>
+          {/* A swipe must not end a class game; the screen's close button asks first. */}
+          <Stack.Screen name="games/duygu-avcisi" options={{ gestureEnabled: false }} />
+        </Stack>
       </ThemeProvider>
     </GestureHandlerRootView>
   );

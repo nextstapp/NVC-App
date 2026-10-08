@@ -16,9 +16,9 @@ const HORIZONTAL = Spacing.five;
 
 export function FeedbackScreen() {
   const theme = useTheme();
-  const { locale, age } = useProfileStore();
+  const locale = useProfileStore((state) => state.locale);
   const nextRound = useGameStore((state) => state.nextRound);
-  const copy = getCopy(locale ?? 'tr', age ?? 12);
+  const copy = getCopy(locale);
 
   return (
     <ScreenShell

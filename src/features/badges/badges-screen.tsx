@@ -10,8 +10,8 @@ import { useProfileStore } from '@/stores/use-profile-store';
 
 export function BadgesScreen() {
   const theme = useTheme();
-  const { locale, age, badges } = useProfileStore();
-  const copy = getCopy(locale ?? 'tr', age ?? 12);
+  const { locale, badges } = useProfileStore();
+  const copy = getCopy(locale);
 
   if (badges.length > 0) {
     return (
